@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-5)hf(wnx#2k*u9@lm5@@*r*p&*(!r()qn3yt98#&bajhu11f7&'
+SECRET_KEY = env('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -81,14 +81,25 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
-
-DATABASES = {
+if DEBUG:
+	DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
+		}
+	}
+else:
+	DATABASES = {
+			'default': {
+				'ENGINE': 'django.db.backends.postgresql_psycopg2',
+				'NAME': env('POSTGRES_DB'),
+				'USER': env('POSTGRES_USERNAME'),
+				'PASSWORD': env('POSTGRES_PASSWORD'),
+				'HOST': env('POSTGRES_HOST'),
+				'PORT': env('POSTGRES_PORT'),
+				'OPTIONS':{'sslmode': 'require'}
+			}
+		}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
